@@ -12,6 +12,9 @@ import {
 } from "~/server/api/trpc";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
+const PostTypeSchema = z.enum(["post", "comment"]);
+export type PostType = z.infer<typeof PostTypeSchema>;
+
 const addUserDataToPosts = async (posts: Post[]) => {
   const users = (
     await clerkClient.users.getUserList({
@@ -89,10 +92,11 @@ export const postsRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
+        type: PostTypeSchema,
         content: z
           .string()
           .regex(new RegExp("bus", "i"), {
-            message: "Post must contain the word 'bus' 🚌",
+            message: "Must contain the word 'bus' 🚌",
           })
           .min(1)
           .max(255),
