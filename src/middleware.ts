@@ -2,7 +2,7 @@ import { authMiddleware } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
 export default authMiddleware({
-  afterAuth(_auth, _req, _evt) {
+  afterAuth() {
     return NextResponse.next();
   },
 });

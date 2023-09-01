@@ -1,15 +1,12 @@
 import Head from "next/head";
 import Image from "next/image";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import superjson from "superjson";
 import type { GetStaticProps, NextPage } from "next/types";
 
 import { api } from "~/utils/api";
-import { appRouter } from "~/server/api/root";
-import { prisma } from "~/server/db";
 import { PageLayout } from "~/components/layout";
 import { PostView } from "~/components/postview";
 import { LoadingPage } from "~/components/loading";
+import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
@@ -42,18 +39,18 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <title>{`@${data.username}`}</title>
       </Head>
       <PageLayout>
-        <div className="relative h-36 bg-slate-700">
+        <div className="relative h-36 bg-slate-500">
           <Image
             src={data.imageUrl}
             alt="Profile image"
-            className="absolute bottom-0 left-0 -mb-[64px] ml-8 rounded-full border-4 border-orange-400 bg-slate-800"
+            className="absolute bottom-0 left-0 -mb-[64px] ml-8 rounded-full border-4 border-orange-200 bg-slate-800"
             width={128}
             height={128}
           />
         </div>
         <div className="h-[64px]"></div>
         <div className="ml-8 py-4 text-2xl font-bold">{`@${data.username}`}</div>
-        <div className="border-b border-orange-400"></div>
+        <div className="border-b border-orange-200"></div>
         <ProfileFeed userId={data.id} />
       </PageLayout>
     </>
@@ -61,11 +58,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: { prisma, userId: null },
-    transformer: superjson, // optional - adds superjson serialization
-  });
+  const helpers = generateSSGHelper();
 
   const slug = context.params?.slug;
 
