@@ -6,6 +6,8 @@ import Image from "next/image";
 import { type RouterOutputs, api } from "~/utils/api";
 import { LoadingPage } from "~/components/loading";
 
+import { useState } from "react";
+
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -14,6 +16,17 @@ dayjs.extend(relativeTime);
 const CreatePostWizard = () => {
   const { user } = useUser();
 
+  const [input, setInput] = useState("");
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      void ctx.posts.getAll.invalidate();
+    },
+  });
+
   if (!user) return null;
 
   return (
@@ -21,14 +34,19 @@ const CreatePostWizard = () => {
       <Image
         src={user.imageUrl}
         alt="Profile image"
-        className="rounded-full"
+        className="h-full rounded-full"
         width={56}
         height={56}
       />
       <input
         placeholder="Post about buses! 🚌"
         className="grow bg-transparent outline-none"
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        disabled={isPosting}
       />
+      <button onClick={() => mutate({ content: input })}>BUS!</button>
     </div>
   );
 };
@@ -41,7 +59,7 @@ const PostView = (props: PostWithUser) => {
       <Image
         src={author.imageUrl}
         alt="Profile image"
-        className="rounded-full"
+        className="h-full rounded-full"
         width={56}
         height={56}
       />
