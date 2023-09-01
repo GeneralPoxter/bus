@@ -57,7 +57,7 @@ export const postsRouter = createTRPCRouter({
         content: z
           .string()
           .regex(new RegExp("bus", "i"), {
-            message: "Post must contain 'bus' 🚌",
+            message: "Post must contain the word 'bus' 🚌",
           })
           .min(1)
           .max(255),
