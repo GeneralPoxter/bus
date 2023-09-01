@@ -1,4 +1,4 @@
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 
 import { api } from "~/utils/api";
@@ -103,7 +103,11 @@ export default function Home() {
               <SignInButton />
             </div>
           )}
-          {isSignedIn && <CreatePostWizard />}
+          {isSignedIn && (
+            <>
+              <CreatePostWizard /> <SignOutButton />
+            </>
+          )}
         </div>
         <Feed />
       </PageLayout>
