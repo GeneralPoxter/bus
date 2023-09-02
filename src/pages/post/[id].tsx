@@ -5,6 +5,8 @@ import { api } from "~/utils/api";
 import { PageLayout } from "~/components/layout";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { PostView } from "~/components/postview";
+import { CreatePostForm } from "~/components/postform";
+import { Feed } from "~/components/feed";
 
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.posts.getById.useQuery({
@@ -20,6 +22,8 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
       </Head>
       <PageLayout>
         <PostView {...data} />
+        <CreatePostForm parentId={id} />
+        <Feed parentId={id} />
       </PageLayout>
     </>
   );

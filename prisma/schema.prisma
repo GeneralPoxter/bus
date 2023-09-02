@@ -18,5 +18,9 @@ model Post {
     content  String @db.VarChar(255)
     authorId String
 
-    @@index([authorId])
+    parentId String?
+    parent   Post?   @relation("Comments", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+    comments Post[]  @relation("Comments")
+
+    @@index([parentId, authorId])
 }

@@ -12,9 +12,6 @@ import {
 } from "~/server/api/trpc";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
-const PostTypeSchema = z.enum(["post", "comment"]);
-export type PostType = z.infer<typeof PostTypeSchema>;
-
 const addUserDataToPosts = async (posts: Post[]) => {
   const users = (
     await clerkClient.users.getUserList({
@@ -62,14 +59,19 @@ export const postsRouter = createTRPCRouter({
       return (await addUserDataToPosts([post]))[0];
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.prisma.post.findMany({
-      take: 100,
-      orderBy: [{ createdAt: "desc" }],
-    });
+  getAllComments: publicProcedure
+    .input(z.string().nullable())
+    .query(async ({ ctx, input }) => {
+      const posts = await ctx.prisma.post.findMany({
+        take: 100,
+        orderBy: [{ createdAt: "desc" }],
+        where: {
+          parentId: input,
+        },
+      });
 
-    return addUserDataToPosts(posts);
-  }),
+      return addUserDataToPosts(posts);
+    }),
 
   getPostsByUserId: publicProcedure
     .input(
@@ -92,14 +94,14 @@ export const postsRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
-        type: PostTypeSchema,
         content: z
           .string()
           .regex(new RegExp("bus", "i"), {
-            message: "Must contain the word 'bus' 🚌",
+            message: `Post must contain the word 'bus' 🚌`,
           })
           .min(1)
           .max(255),
+        parentId: z.string().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -112,6 +114,7 @@ export const postsRouter = createTRPCRouter({
         data: {
           authorId,
           content: input.content,
+          parentId: input.parentId,
         },
       });
 

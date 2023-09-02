@@ -1,18 +1,13 @@
-import { useUser } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 
 import { api } from "~/utils/api";
 import { LoadingSpinner } from "~/components/loading";
-import type { PostType } from "~/server/api/routers/posts";
 
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-function titleCase(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-export const CreatePostForm = (props: { type: PostType }) => {
+const CreatePostWizard = (props: { parentId: string | null }) => {
   const { user } = useUser();
 
   const [input, setInput] = useState("");
@@ -22,7 +17,7 @@ export const CreatePostForm = (props: { type: PostType }) => {
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: () => {
       setInput("");
-      void ctx.posts.getAll.invalidate();
+      void ctx.posts.getAllComments.invalidate();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -33,6 +28,13 @@ export const CreatePostForm = (props: { type: PostType }) => {
       }
     },
   });
+
+  const submitForm = () => {
+    mutate({
+      content: input,
+      parentId: props.parentId,
+    });
+  };
 
   if (!user) return null;
 
@@ -46,8 +48,8 @@ export const CreatePostForm = (props: { type: PostType }) => {
         height={56}
       />
       <input
-        placeholder={`${titleCase(props.type)} about buses! 🚌`}
-        className="grow bg-transparent outline-none"
+        placeholder={`${props.parentId ? "Comment" : "Post"} about buses! 🚌`}
+        className="grow bg-transparent placeholder-gray-300 outline-none"
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -55,7 +57,7 @@ export const CreatePostForm = (props: { type: PostType }) => {
           if (e.key === "Enter") {
             e.preventDefault();
             if (input !== "") {
-              mutate({ type: props.type, content: input });
+              submitForm();
             }
           }
         }}
@@ -64,7 +66,7 @@ export const CreatePostForm = (props: { type: PostType }) => {
       {input !== "" && !isPosting && (
         <button
           className="rounded-lg bg-orange-300 px-4 py-2 font-bold hover:bg-orange-400"
-          onClick={() => mutate({ type: props.type, content: input })}
+          onClick={submitForm}
         >
           BUS!
         </button>
@@ -75,6 +77,21 @@ export const CreatePostForm = (props: { type: PostType }) => {
           <LoadingSpinner size={24} />
         </div>
       )}
+    </div>
+  );
+};
+
+export const CreatePostForm = (props: { parentId: string | null }) => {
+  const { isSignedIn } = useUser();
+
+  return (
+    <div className="flex border-b border-orange-200 bg-slate-500 p-4">
+      {!isSignedIn && (
+        <div className="flex justify-center">
+          <SignInButton />
+        </div>
+      )}
+      {isSignedIn && <CreatePostWizard parentId={props.parentId} />}
     </div>
   );
 };
