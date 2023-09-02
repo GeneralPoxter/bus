@@ -12,7 +12,7 @@ import { type LucideIcon, MessageCircle, Heart } from "lucide-react";
 const PostIcon = (props: { icon: LucideIcon; label: string }) => {
   return (
     <div className="group flex w-16 items-center gap-1">
-      <props.icon className="stroke-accent group-hover:stroke-accent-light h-5" />
+      <props.icon className="h-5 stroke-accent group-hover:stroke-accent-light" />
       <span className="text-accent group-hover:text-accent-light">
         {props.label}
       </span>
@@ -33,10 +33,10 @@ export const PostView = (props: PostWithUser) => {
         height={48}
       />
       <div className="flex flex-col">
-        <div className="text-accent flex gap-1 ">
+        <div className="flex gap-1 text-accent ">
           <Link
             href={`/@${author.username}`}
-            className="hover:text-accent-light no-underline hover:underline"
+            className="no-underline hover:text-accent-light hover:underline"
           >
             <span>{`@${author.username}`}</span>
           </Link>
