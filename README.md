@@ -1,6 +1,6 @@
 # Bus 🚌
 
-This is a Twitter clone exclusively for posting about buses, built using the [T3 Stack](https://create.t3.gg/).
+This is a full-stack Twitter clone exclusively for posting about buses, built using the [T3 Stack](https://create.t3.gg/).
 
 **Time spent:** ~12 hours
 
@@ -8,9 +8,10 @@ This is a Twitter clone exclusively for posting about buses, built using the [T3
 
 ## Features
 
-- GitHub sign-in
+- GitHub authentication
 - Post validation (can only post about buses)
 - Like and reply to posts
+- Mobile responsiveness
 
 ## Tools used
 
