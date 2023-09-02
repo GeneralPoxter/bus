@@ -51,14 +51,13 @@ const LikeButton = (props: { postId: string; small: boolean }) => {
     postId: props.postId,
   });
 
+  const { data } = api.profile.getUserByUsername.useQuery({
+    username: user?.username ? user.username : null,
+  });
+
   let isLiked = false;
-  if (user?.username) {
-    const { data } = api.profile.getUserByUsername.useQuery({
-      username: user.username,
-    });
-    if (likes && data) {
-      isLiked = likes.some((like) => like.userId === data.id);
-    }
+  if (likes && data) {
+    isLiked = likes.some((like) => like.userId === data.id);
   }
 
   const { mutate: mutateLike } = api.posts.like.useMutation({
