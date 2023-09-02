@@ -49,14 +49,14 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             <Image
               src={data.imageUrl}
               alt="Profile image"
-              className="bg-base border-accent absolute bottom-0 left-0 -mb-[64px] ml-8 rounded-full border-4"
+              className="bg-base border-accent absolute bottom-0 left-0 -mb-[64px] ml-8 rounded-full border-[3px]"
               width={128}
               height={128}
             />
           </div>
           <div className="h-[64px]"></div>
           <div className="mb-4 ml-8 mt-2 text-2xl font-bold">{`@${data.username}`}</div>
-          <div className="border-b border-slate-500"></div>
+          <div className="border-b-4 border-slate-600"></div>
         </div>
         <ProfileFeed userId={data.id} />
       </PageLayout>

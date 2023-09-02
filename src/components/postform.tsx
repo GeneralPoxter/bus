@@ -45,13 +45,13 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
       <Image
         src={user.imageUrl}
         alt="Profile image"
-        className="rounded-full border-2 border-slate-500"
+        className="rounded-full border-2 border-slate-600"
         width={64}
         height={64}
       />
       <input
         placeholder={`${props.parentId ? "Comment" : "Post"} about buses! 🚌`}
-        className="grow bg-transparent placeholder-gray-300 outline-none"
+        className="grow bg-transparent text-xl placeholder-gray-300 outline-none"
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -70,7 +70,7 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
           className="bg-accent rounded-lg px-4 py-2 font-bold hover:scale-110"
           onClick={submitForm}
         >
-          BUS!
+          POST
         </button>
       )}
 
@@ -87,7 +87,7 @@ export const CreatePostForm = (props: { parentId: string | null }) => {
   const { isSignedIn } = useUser();
 
   return (
-    <div className="bg-base-light flex border-b-2 border-slate-500 p-4">
+    <div className="bg-base-light flex border-b-4 border-slate-600 p-4">
       {!isSignedIn && (
         <div className="flex justify-center">
           <SignInButton />

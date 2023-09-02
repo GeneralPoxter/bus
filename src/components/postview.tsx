@@ -24,11 +24,11 @@ type PostWithUser = RouterOutputs["posts"]["getAllComments"][number];
 export const PostView = (props: PostWithUser) => {
   const { post, author } = props;
   return (
-    <div key={post.id} className="flex gap-3 border-b border-slate-500 p-4">
+    <div key={post.id} className="flex gap-3 border-b border-slate-600 p-4">
       <Image
         src={author.imageUrl}
         alt="Profile image"
-        className="h-[48px] rounded-full border border-slate-500"
+        className="h-[48px] rounded-full border border-slate-600"
         width={48}
         height={48}
       />
@@ -44,7 +44,7 @@ export const PostView = (props: PostWithUser) => {
             post.createdAt,
           ).fromNow()}`}</span>
         </div>
-        <span className="text-xl">{post.content}</span>
+        <span>{post.content}</span>
         <div className="flex pt-3">
           <Link href={`/post/${post.id}`}>
             <PostIcon icon={MessageCircle} label={`${post.comments.length}`} />
