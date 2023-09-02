@@ -21,6 +21,16 @@ model Post {
     parentId String?
     parent   Post?   @relation("Comments", fields: [parentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
     comments Post[]  @relation("Comments")
+    likes    Like[]
 
     @@index([parentId, authorId])
+}
+
+model Like {
+    id     String @id @default(cuid())
+    userId String
+    post   Post   @relation(fields: [postId], references: [id])
+    postId String
+
+    @@index([postId, userId])
 }

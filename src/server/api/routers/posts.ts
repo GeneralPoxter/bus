@@ -15,9 +15,9 @@ import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 const postWithComments = Prisma.validator<Prisma.PostDefaultArgs>()({
   include: { comments: true },
 });
-type PostWithComments = Prisma.PostGetPayload<typeof postWithComments>;
+type PostWithData = Prisma.PostGetPayload<typeof postWithComments>;
 
-const addUserDataToPosts = async (posts: PostWithComments[]) => {
+const addUserDataToPosts = async (posts: PostWithData[]) => {
   const users = (
     await clerkClient.users.getUserList({
       userId: posts.map((post) => post.authorId),
@@ -127,5 +127,52 @@ export const postsRouter = createTRPCRouter({
       });
 
       return post;
+    }),
+
+  getLikesByPostId: publicProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+      }),
+    )
+    .query(({ ctx, input }) =>
+      ctx.prisma.like.findMany({
+        where: { postId: input.postId },
+      }),
+    ),
+
+  like: privateProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const alreadyLiked = await ctx.prisma.like.findMany({
+        where: { userId: ctx.userId, postId: input.postId },
+      });
+
+      if (alreadyLiked.length > 0) throw new TRPCError({ code: "BAD_REQUEST" });
+
+      const like = await ctx.prisma.like.create({
+        data: {
+          userId: ctx.userId,
+          postId: input.postId,
+        },
+      });
+
+      return like;
+    }),
+
+  unlike: privateProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.like.deleteMany({
+        where: { userId: ctx.userId, postId: input.postId },
+      });
     }),
 });

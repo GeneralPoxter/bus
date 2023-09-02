@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
 import { api, type RouterOutputs } from "~/utils/api";
 
 import dayjs from "dayjs";
@@ -13,12 +14,13 @@ const PostIcon = (props: {
   icon: LucideIcon;
   label: string;
   small: boolean;
+  fill: boolean;
 }) => {
   return (
     <div className="group flex w-16 items-center gap-1">
       <props.icon
-        className={`${
-          props.small ? "h-4" : "h-5"
+        className={`${props.small ? "h-4" : "h-5"} ${
+          props.fill && "fill-accent group-hover:fill-accent-light"
         } stroke-accent group-hover:stroke-accent-light`}
       />
       <span className="text-accent group-hover:text-accent-light">
@@ -37,6 +39,55 @@ const ProfileImage = (props: { src: string; size: number }) => {
       width={props.size}
       height={props.size}
     />
+  );
+};
+
+const LikeButton = (props: { postId: string; small: boolean }) => {
+  const { user } = useUser();
+
+  const ctx = api.useContext();
+
+  const { data: likes } = api.posts.getLikesByPostId.useQuery({
+    postId: props.postId,
+  });
+
+  let isLiked = false;
+  if (user?.username) {
+    const { data } = api.profile.getUserByUsername.useQuery({
+      username: user.username,
+    });
+    if (likes && data) {
+      isLiked = likes.some((like) => like.userId === data.id);
+    }
+  }
+
+  const { mutate: mutateLike } = api.posts.like.useMutation({
+    onSuccess: () => {
+      void ctx.posts.getLikesByPostId.invalidate();
+    },
+  });
+
+  const { mutate: mutateUnlike } = api.posts.unlike.useMutation({
+    onSuccess: () => {
+      void ctx.posts.getLikesByPostId.invalidate();
+    },
+  });
+
+  return (
+    <button
+      onClick={() =>
+        isLiked
+          ? mutateUnlike({ postId: props.postId })
+          : mutateLike({ postId: props.postId })
+      }
+    >
+      <PostIcon
+        icon={Heart}
+        label={likes ? `${likes.length}` : "0"}
+        small={props.small}
+        fill={isLiked}
+      />
+    </button>
   );
 };
 
@@ -62,11 +113,10 @@ const PostContent = (props: { data: PostWithUser; small: boolean }) => {
             icon={MessageCircle}
             label={`${post.comments.length}`}
             small={props.small}
+            fill={false}
           />
         </Link>
-        <button>
-          <PostIcon icon={Heart} label="0" small={props.small} />
-        </button>
+        <LikeButton postId={post.id} small={props.small} />
       </div>
     </div>
   );
