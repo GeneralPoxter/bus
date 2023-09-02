@@ -27,9 +27,10 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
       </Head>
       <PageLayout>
         <CreatePostForm parentId={id} />
-        <PostView {...data} />
-        <div className="ml-14 flex grow flex-col overflow-y-auto border-l-4 border-slate-600">
-          <PostFeed parentId={id} />
+        <PostView data={data} showParent={true} />
+        <div className="border-b-[3px] border-slate-600"></div>
+        <div className="ml-10 flex grow flex-col overflow-y-auto border-l border-dashed border-slate-600">
+          <PostFeed parentId={id} showParent={false} />
         </div>
       </PageLayout>
     </>

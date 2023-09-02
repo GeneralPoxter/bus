@@ -5,12 +5,15 @@ import { LoadingPage } from "~/components/loading";
 const Message = (props: { text: string }) => {
   return (
     <div className="flex h-full items-center justify-center">
-      <span className="text-accent text-xl italic">{props.text}</span>
+      <span className="text-xl italic text-accent">{props.text}</span>
     </div>
   );
 };
 
-export const PostFeed = (props: { parentId: string | null }) => {
+export const PostFeed = (props: {
+  parentId: string | null;
+  showParent: boolean;
+}) => {
   const { data, isLoading: postsLoading } = api.posts.getAllComments.useQuery({
     parentId: props.parentId,
   });
@@ -24,7 +27,11 @@ export const PostFeed = (props: { parentId: string | null }) => {
   return (
     <div className="flex flex-col overflow-y-auto">
       {data.map((fullPost) => (
-        <PostView {...fullPost} key={fullPost.post.id} />
+        <PostView
+          data={fullPost}
+          showParent={props.showParent}
+          key={fullPost.post.id}
+        />
       ))}
     </div>
   );

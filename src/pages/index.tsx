@@ -15,7 +15,7 @@ export default function Home() {
     <>
       <PageLayout>
         <CreatePostForm parentId={null} />
-        <PostFeed parentId={null} />
+        <PostFeed parentId={null} showParent={false} />
       </PageLayout>
     </>
   );
