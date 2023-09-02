@@ -23,8 +23,10 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       if (errorMessage?.[0]) {
         toast.error(errorMessage[0]);
+      } else if (e.data) {
+        toast.error(`Failed to post: ${e.data.code}`);
       } else {
-        toast.error("Failed to post, please bus again later");
+        toast.error("Failed to post, please try again later");
       }
     },
   });
@@ -39,13 +41,13 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
   if (!user) return null;
 
   return (
-    <div className="flex w-full gap-3">
+    <div className="flex w-full items-center gap-3">
       <Image
         src={user.imageUrl}
         alt="Profile image"
-        className="rounded-full"
-        width={56}
-        height={56}
+        className="rounded-full border-2 border-slate-500"
+        width={64}
+        height={64}
       />
       <input
         placeholder={`${props.parentId ? "Comment" : "Post"} about buses! 🚌`}
@@ -65,7 +67,7 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
       />
       {input !== "" && !isPosting && (
         <button
-          className="rounded-lg bg-orange-300 px-4 py-2 font-bold hover:bg-orange-400"
+          className="bg-accent rounded-lg px-4 py-2 font-bold hover:scale-110"
           onClick={submitForm}
         >
           BUS!
@@ -85,7 +87,7 @@ export const CreatePostForm = (props: { parentId: string | null }) => {
   const { isSignedIn } = useUser();
 
   return (
-    <div className="flex border-b border-orange-200 bg-slate-500 p-4">
+    <div className="bg-base-light flex border-b-2 border-slate-500 p-4">
       {!isSignedIn && (
         <div className="flex justify-center">
           <SignInButton />

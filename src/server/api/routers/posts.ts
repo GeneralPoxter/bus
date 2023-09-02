@@ -1,5 +1,5 @@
 import { clerkClient } from "@clerk/nextjs";
-import type { Post } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -12,7 +12,12 @@ import {
 } from "~/server/api/trpc";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
-const addUserDataToPosts = async (posts: Post[]) => {
+const postWithComments = Prisma.validator<Prisma.PostDefaultArgs>()({
+  include: { comments: true },
+});
+type PostWithComments = Prisma.PostGetPayload<typeof postWithComments>;
+
+const addUserDataToPosts = async (posts: PostWithComments[]) => {
   const users = (
     await clerkClient.users.getUserList({
       userId: posts.map((post) => post.authorId),
@@ -52,6 +57,7 @@ export const postsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const post = await ctx.prisma.post.findUnique({
         where: { id: input.id },
+        include: { comments: true },
       });
 
       if (!post) throw new TRPCError({ code: "NOT_FOUND" });
@@ -60,14 +66,15 @@ export const postsRouter = createTRPCRouter({
     }),
 
   getAllComments: publicProcedure
-    .input(z.string().nullable())
+    .input(z.object({ parentId: z.string().nullable() }))
     .query(async ({ ctx, input }) => {
       const posts = await ctx.prisma.post.findMany({
         take: 100,
         orderBy: [{ createdAt: "desc" }],
         where: {
-          parentId: input,
+          parentId: input.parentId,
         },
+        include: { comments: true },
       });
 
       return addUserDataToPosts(posts);
@@ -82,11 +89,12 @@ export const postsRouter = createTRPCRouter({
     .query(({ ctx, input }) =>
       ctx.prisma.post
         .findMany({
+          take: 100,
+          orderBy: [{ createdAt: "desc" }],
           where: {
             authorId: input.userId,
           },
-          take: 100,
-          orderBy: [{ createdAt: "desc" }],
+          include: { comments: true },
         })
         .then(addUserDataToPosts),
     ),

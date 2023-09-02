@@ -13,12 +13,17 @@ const ProfileFeed = (props: { userId: string }) => {
     userId: props.userId,
   });
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading)
+    return (
+      <div className="h-full">
+        <LoadingPage />
+      </div>
+    );
 
   if (!data || data.length === 0) return <div>User has not posted</div>;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex h-full flex-col overflow-y-auto">
       {data.map((fullPost) => (
         <PostView {...fullPost} key={fullPost.post.id} />
       ))}
@@ -39,18 +44,20 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <title>{`@${data.username}`}</title>
       </Head>
       <PageLayout>
-        <div className="relative h-36 bg-slate-500">
-          <Image
-            src={data.imageUrl}
-            alt="Profile image"
-            className="absolute bottom-0 left-0 -mb-[64px] ml-8 rounded-full border-4 border-orange-200 bg-slate-800"
-            width={128}
-            height={128}
-          />
+        <div>
+          <div className="bg-base-light relative h-32">
+            <Image
+              src={data.imageUrl}
+              alt="Profile image"
+              className="bg-base border-accent absolute bottom-0 left-0 -mb-[64px] ml-8 rounded-full border-4"
+              width={128}
+              height={128}
+            />
+          </div>
+          <div className="h-[64px]"></div>
+          <div className="mb-4 ml-8 mt-2 text-2xl font-bold">{`@${data.username}`}</div>
+          <div className="border-b border-slate-500"></div>
         </div>
-        <div className="h-[64px]"></div>
-        <div className="ml-8 py-4 text-2xl font-bold">{`@${data.username}`}</div>
-        <div className="border-b border-orange-200"></div>
         <ProfileFeed userId={data.id} />
       </PageLayout>
     </>

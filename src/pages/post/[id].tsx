@@ -6,9 +6,14 @@ import { PageLayout } from "~/components/layout";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { PostView } from "~/components/postview";
 import { CreatePostForm } from "~/components/postform";
-import { Feed } from "~/components/feed";
+import { PostFeed } from "~/components/postfeed";
+import { useUser } from "@clerk/nextjs";
 
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
+  const { isLoaded: userLoaded } = useUser();
+
+  if (!userLoaded) return <div />;
+
   const { data } = api.posts.getById.useQuery({
     id,
   });
@@ -21,9 +26,11 @@ const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
         <title>{`Post - @${data.author.username}`}</title>
       </Head>
       <PageLayout>
-        <PostView {...data} />
         <CreatePostForm parentId={id} />
-        <Feed parentId={id} />
+        <PostView {...data} />
+        <div className="ml-16 flex grow flex-col overflow-y-auto border-l border-slate-500">
+          <PostFeed parentId={id} />
+        </div>
       </PageLayout>
     </>
   );
