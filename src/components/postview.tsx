@@ -55,10 +55,8 @@ const LikeButton = (props: { postId: string; small: boolean }) => {
     username: user?.username ? user.username : null,
   });
 
-  let isLiked = false;
-  if (likes && data) {
-    isLiked = likes.some((like) => like.userId === data.id);
-  }
+  const isLiked =
+    likes && data ? likes.some((like) => like.userId === data.id) : false;
 
   const { mutate: mutateLike } = api.posts.like.useMutation({
     onSuccess: () => {

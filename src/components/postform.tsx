@@ -54,7 +54,7 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
       />
       <input
         placeholder={`${props.parentId ? "Comment" : "Post"} about buses! 🚌`}
-        className="grow bg-transparent text-xl placeholder-gray-300 outline-none"
+        className="w-0 flex-1 bg-transparent text-xl placeholder-gray-300 outline-none"
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -70,7 +70,7 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
       />
       {input !== "" && !isPosting && (
         <button
-          className="rounded-lg bg-accent px-4 py-2 text-base text-xl font-bold hover:scale-110"
+          className="rounded-lg bg-accent px-4 py-2 text-base text-xl font-bold hover:bg-accent-light"
           onClick={submitForm}
         >
           Post
@@ -94,7 +94,7 @@ export const CreatePostForm = (props: { parentId: string | null }) => {
       {!isSignedIn && (
         <div className="flex w-full justify-center">
           <SignInButton>
-            <button className="rounded-lg bg-accent px-4 py-2 text-base text-xl font-bold hover:scale-110">
+            <button className="rounded-lg bg-accent px-4 py-2 text-base text-xl font-bold hover:bg-accent-light">
               Sign in
             </button>
           </SignInButton>
