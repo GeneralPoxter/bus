@@ -18,6 +18,9 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
     onSuccess: () => {
       setInput("");
       void ctx.posts.getAllComments.invalidate();
+      if (props.parentId) {
+        void ctx.posts.getById.invalidate();
+      }
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -76,7 +79,7 @@ const CreatePostWizard = (props: { parentId: string | null }) => {
 
       {isPosting && (
         <div className="flex items-center justify-center">
-          <LoadingSpinner size={24} />
+          <LoadingSpinner size={48} />
         </div>
       )}
     </div>
