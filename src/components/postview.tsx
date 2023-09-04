@@ -99,9 +99,10 @@ const PostContent = (props: { data: PostWithUser; small: boolean }) => {
         >
           <span>{`@${author.username}`}</span>
         </Link>
-        <span className="font-thin text-accent">{`🚍 ${dayjs(
-          post.createdAt,
-        ).fromNow()}`}</span>
+        <span
+          title={`${post.createdAt.toLocaleDateString()} ${post.createdAt.toLocaleTimeString()}`}
+          className="font-thin text-accent"
+        >{`🚍 ${dayjs(post.createdAt).fromNow()}`}</span>
       </div>
       <span>{post.content}</span>
       <div className={`flex ${props.small ? "pt-2" : "pt-3"}`}>
