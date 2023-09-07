@@ -11,6 +11,7 @@ This is a full-stack Twitter clone exclusively for posting about buses, built us
 - GitHub authentication
 - Post validation (can only post about buses)
 - Like and reply to posts
+- View user post history
 - Mobile responsiveness
 
 ## Tools used
