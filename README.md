@@ -13,6 +13,7 @@ This is a full-stack Twitter clone exclusively for posting about buses, built us
 - Like and reply to posts
 - View user post history
 - Mobile responsiveness
+- Loading animation
 
 ## Tools used
 
